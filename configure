@@ -1,0 +1,250 @@
+#!/bin/bash
+
+#----------------------------------------------------------------------------------------------
+#  configure script
+#----------------------------------------------------------------------------------------------
+
+# -- help -------------------------------------------------------------------------------------
+if test x"$1" = x"-h" -o x"$1" = x"--help" ; then
+cat << EOF
+Usage: [PKG_CONFIG_PATH=/foo/bar/lib/pkgconfig] ./configure [options]
+options:
+  -h, --help               print help (this)
+
+  --prefix=PREFIX          set dir for headers and lids [NONE]
+  --libdir=DIR             set dir for libs    [NONE]
+  --includedir=DIR         set dir for headers [NONE]
+
+  --extra-cflags=XCFLAGS   add XCFLAGS to CFLAGS
+  --extra-ldflags=XLDFLAGS add XLDFLAGS to LDFLAGS
+  --extra-libs=XLIBS       add XLIBS to LIBS
+
+  --cross-prefix=PREFIX    use PREFIX for compilation tools
+  --sysroot=SYSROOT        root of cross-build tree
+
+EOF
+exit 1
+fi
+
+#-- func --------------------------------------------------------------------------------------
+error_exit()
+{
+    echo error: $1
+    exit 1
+}
+
+log_echo()
+{
+    echo $1
+    echo >> config.log
+    echo --------------------------------- >> config.log
+    echo $1 >> config.log
+}
+
+cc_check()
+{
+    rm -f conftest.c
+    if [ -n "$3" ]; then
+        echo "#include <$3>" >> config.log
+        echo "#include <$3>" > conftest.c
+    fi
+    echo "int main(void){$4 return 0;}" >> config.log
+    echo "int main(void){$4 return 0;}" >> conftest.c
+    echo $CC conftest.c -o conftest $1 $2 >> config.log
+    $CC conftest.c -o conftest $1 $2 2>> config.log
+    ret=$?
+    echo $ret >> config.log
+    rm -f conftest*
+    return $ret
+}
+#----------------------------------------------------------------------------------------------
+rm -f config.* .depend
+
+SRCDIR="$(cd $(dirname $0); pwd)"
+test "$SRCDIR" = "$(pwd)" && SRCDIR=.
+test -n "$(echo $SRCDIR | grep ' ')" && \
+    error_exit "out-of-tree builds are impossible with whitespace in source path"
+
+# -- init -------------------------------------------------------------------------------------
+CC="gcc"
+LD="gcc"
+RC="windres"
+STRIP="strip"
+
+prefix=""
+includedir=""
+libdir=""
+
+CFLAGS="-Wall -std=c99 -I. -I$SRCDIR"
+LDFLAGS="-L."
+DEPLIBS="liblsmash opus"
+
+EXT=""
+
+SRC_MP4OPUSENC="mp4opusenc.c"
+SRC_MP4OPUSDEC="mp4opusdec.c"
+
+# -- options ----------------------------------------------------------------------------------
+echo all command lines: > config.log
+echo "$*" >> config.log
+
+for opt; do
+    optarg="${opt#*=}"
+    case "$opt" in
+        --prefix=*)
+            prefix="$optarg"
+            ;;
+        --libdir=*)
+            libdir="$optarg"
+            ;;
+        --includedir=*)
+            includedir="$optarg"
+            ;;
+        --extra-cflags=*)
+            XCFLAGS="$optarg"
+            ;;
+        --extra-ldflags=*)
+            XLDFLAGS="$optarg"
+            ;;
+        --extra-libs=*)
+            XLIBS="$optarg"
+            ;;
+        --cross-prefix=*)
+            CROSS="$optarg"
+            ;;
+        --sysroot=*)
+            CFLAGS="$CFLAGS --sysroot=$optarg"
+            LDFLAGS="$LDFLAGS --sysroot=$optarg"
+            ;;
+        *)
+            error_exit "unknown option $opt"
+            ;;
+    esac
+done
+
+# -- add extra --------------------------------------------------------------------------------
+if test -n "$prefix"; then
+    CFLAGS="$CFLAGS -I$prefix/include"
+    LDFLAGS="$LDFLAGS -L$prefix/lib"
+fi
+test -n "$includedir" && CFLAGS="$CFLAGS -I$includedir"
+test -n "$libdir" && LDFLAGS="$LDFLAGS -L$libdir"
+
+CFLAGS="$CFLAGS $XCFLAGS"
+LDFLAGS="$LDFLAGS $XLDFLAGS"
+
+# -- check_exe --------------------------------------------------------------------------------
+CC="${CROSS}${CC}"
+LD="${CROSS}${LD}"
+RC="${CROSS}${RC}"
+STRIP="${CROSS}${STRIP}"
+for f in "$CC" "$LD" "$RC" "$STRIP"; do
+    test -n "$(which $f 2> /dev/null)" || error_exit "$f is not executable"
+done
+
+if test -n "$TARGET_OS"; then
+    TARGET_OS=$(echo $TARGET_OS | tr '[A-Z]' '[a-z]')
+else
+    TARGET_OS=$($CC -dumpmachine | tr '[A-Z]' '[a-z]')
+fi
+case "$TARGET_OS" in
+    *mingw*)
+        EXT=".exe"
+        ;;
+    *cygwin*)
+        EXT=".exe"
+        ;;
+    *)
+        ;;
+esac
+
+# -- check & set cflags and ldflags  ----------------------------------------------------------
+log_echo "CFLAGS/LDFLAGS checking..."
+if ! cc_check "$CFLAGS" "$LDFLAGS"; then
+    error_exit "invalid CFLAGS/LDFLAGS"
+fi
+if cc_check "-Os -ffast-math $CFLAGS" "$LDFLAGS"; then
+    CFLAGS="-Os -ffast-math $CFLAGS"
+fi
+if cc_check "$CFLAGS -fexcess-precision=fast" "$LDFLAGS"; then
+    CFLAGS="$CFLAGS -fexcess-precision=fast"
+fi
+
+# -- check pkg-config ----------------------------------------------------------------
+PKGCONFIGEXE="pkg-config"
+test -n "$(which ${CROSS}${PKGCONFIGEXE} 2> /dev/null)" && \
+    PKGCONFIGEXE=${CROSS}${PKGCONFIGEXE}
+
+if $PKGCONFIGEXE --exists $DEPLIBS 2> /dev/null; then
+    LIBS="$($PKGCONFIGEXE --libs $DEPLIBS)"
+    CFLAGS="$CFLAGS $($PKGCONFIGEXE --cflags $DEPLIBS)"
+else
+    for lib in $DEPLIBS; do
+        LIBS="$LIBS -l${lib#lib}"
+    done
+    log_echo "warning: pkg-config or pc files not found, lib detection may be inaccurate."
+fi
+
+# -- check liblsmash -----------------------------------------------------------------------------
+log_echo "checking for liblsmash..."
+if ! cc_check "$CFLAGS" "$LDFLAGS $LIBS $XLIBS" "lsmash.h" "lsmash_create_root();" ; then
+    log_echo "error: liblsmash checking failed"
+    error_exit "lsmash.h might not be installed or some libs missing."
+fi
+
+# -- check libopus -----------------------------------------------------------------------------
+log_echo "checking for libopus..."
+if ! cc_check "$CFLAGS" "$LDFLAGS $LIBS $XLIBS" "opus/opus_multistream.h" "opus_multistream_decoder_create(0,0,0,0,(void*)1,NULL);" ; then
+    log_echo "error: libopus checking failed"
+    error_exit "opus_multistream.h might not be installed or some libs missing."
+fi
+
+LIBS="$LIBS $XLIBS"
+
+# -- output config.mak ------------------------------------------------------------------------
+rm -f config.mak
+cat >> config.mak << EOF
+CC = $CC
+LD = $LD
+RC = $RC
+STRIP = $STRIP
+CFLAGS = $CFLAGS
+LDFLAGS = $LDFLAGS
+LIBS = $LIBS
+SRCDIR = $SRCDIR
+SRC_MP4OPUSENC = $SRC_MP4OPUSENC
+SRC_MP4OPUSDEC = $SRC_MP4OPUSDEC
+MP4OPUSENC = mp4opusenc$EXT
+MP4OPUSDEC = mp4opusdec$EXT
+EOF
+
+cat >> config.log << EOF
+---------------------------------
+    setting
+---------------------------------
+EOF
+cat config.mak >> config.log
+
+cat << EOF
+
+settings...
+CC          = $CC
+LD          = $LD
+RC          = $RC
+STRIP       = $STRIP
+CFLAGS      = $CFLAGS
+LDFLAGS     = $LDFLAGS
+LIBS        = $LIBS
+EOF
+
+test "$SRCDIR" = "." || cp -f $SRCDIR/GNUmakefile .
+
+# ---------------------------------------------------------------------------------------------
+
+cat << EOF
+
+configure finished.
+type 'make'            : compile all tools
+type 'make mp4opusenc' : compile mp4opusenc
+type 'make mp4opusdec' : compile mp4opusdec
+EOF
