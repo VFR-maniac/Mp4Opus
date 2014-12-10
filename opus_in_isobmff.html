@@ -12,7 +12,7 @@
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.5.6 (incomplete)
+                                        Version 0.5.7 (incomplete)
 
 
 Table of Contents
@@ -44,9 +44,6 @@ Table of Contents
         <a href="#4.8.7">4.8.7</a> Sample Table Box
         <a href="#4.8.8">4.8.8</a> OpusSampleEntry
         <a href="#4.8.9">4.8.9</a> Opus Specific Box
-        <a href="#4.8.10">4.8.10</a> Sample Group Description Box
-        <a href="#4.8.11">4.8.11</a> Sample to Group Box
-        <a href="#4.8.12">4.8.12</a> Track Fragment Box
     <a href="#4.9">4.9</a> Example of Encapsulation
 <a href="#5">5</a> Author's Address
 
@@ -265,6 +262,11 @@ Table of Contents
             used since every Opus sample is a sync sample in Opus bitstream. Note that roll_distance is expressed in
             sample units in a term of ISO Base Media File Format, and always takes negative values.
 
+            For any track containing Opus bitstreams, at least one Sample Group Description Box and at least one
+            Sample to Group Box within the Sample Table Box shall be present and have the grouping_type field set to
+            'roll'. If any Opus sample is contained in a track fragment, the Sample to Group Box with the grouping_type
+            field set to 'roll' shall be present for that track fragment.
+
             For the requirement of AudioRollRecoveryEntry, the compatible_brands field in the File Type Box shall
             contain at least one brand which requires support for roll groups.
 <a name="4.6"></a>
@@ -464,29 +466,6 @@ Table of Contents
             + ChannelMapping:
                 The ChannelMapping field shall be set to the same octet string as *Channel Mapping* field in the identi-
                 fication header defined in Ogg Opus [4].
-
-        4.8.10 Sample Group Description Box<a name="4.8.10"></a>
-            For any track containing Opus bitstreams, at least one Sample Group Description Box shall be present and have
-            the grouping_type field set to 'roll'. In addition, the following requirements and restriction are applied.
-            + version:
-                The version field shall be set to 1 if the grouping_type field set to 'roll'.
-            + default_length
-                The default_length field shall be set to 2 if the grouping_type field set to 'roll'.
-            + roll_distance:
-                The roll_distance field in any AudioRollRecoveryEntry shall not be set to zero and positive values for
-                any Opus sample.
-
-            See also 4.5.2 Pre-roll.
-
-        4.8.11 Sample to Group Box<a name="4.8.11"></a>
-            For any track containing Opus bitstreams, at least one Sample to Group Box shall be present and have the
-            grouping_type field set to 'roll'. In addition, the following requirement is applied.
-            + group_description_index:
-                The group_description_index fields shall not be set to 0 if the grouping_type field set to 'roll'.
-
-        4.8.12 Track Fragment Box<a name="4.8.12"></a>
-            For any track containing Opus bitstreams, if any sample is contained in track fragment, the Sample to
-            Group Box with the grouping_type field set to 'roll' shall be present for that track fragment.
 <a name="4.9"></a>
     4.9 Example of Encapsulation
         [File]
