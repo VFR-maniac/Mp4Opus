@@ -12,7 +12,7 @@
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.5.7 (incomplete)
+                                        Version 0.5.8 (incomplete)
 
 
 Table of Contents
@@ -35,15 +35,13 @@ Table of Contents
     <a href="#4.6">4.6</a> Trimming of Actual Duration
     <a href="#4.7">4.7</a> Channel Layout
     <a href="#4.8">4.8</a> Additional Requirements, Restrictions, Recommendations and Definitions for Boxes
-        <a href="#4.8.1">4.8.1</a> Movie Header Box
-        <a href="#4.8.2">4.8.2</a> Edit Box
-        <a href="#4.8.3">4.8.3</a> Edit List Box
-        <a href="#4.8.4">4.8.4</a> Media Header Box
-        <a href="#4.8.5">4.8.5</a> Handler Reference Box
-        <a href="#4.8.6">4.8.6</a> Sound Media Header Box
-        <a href="#4.8.7">4.8.7</a> Sample Table Box
-        <a href="#4.8.8">4.8.8</a> OpusSampleEntry
-        <a href="#4.8.9">4.8.9</a> Opus Specific Box
+        <a href="#4.8.1">4.8.1</a> Edit Box
+        <a href="#4.8.2">4.8.2</a> Edit List Box
+        <a href="#4.8.3">4.8.3</a> Handler Reference Box
+        <a href="#4.8.4">4.8.4</a> Sound Media Header Box
+        <a href="#4.8.5">4.8.5</a> Sample Table Box
+        <a href="#4.8.6">4.8.6</a> OpusSampleEntry
+        <a href="#4.8.7">4.8.7</a> Opus Specific Box
     <a href="#4.9">4.9</a> Example of Encapsulation
 <a href="#5">5</a> Author's Address
 
@@ -275,7 +273,10 @@ Table of Contents
         padded samples at the end, we need trim from media to get the actual duration. An edit in the Edit List Box can
         achieve this demand.
         For sample-accurate trimming, proper timescale should be set to the timescale field in the Movie Header Box
-        and the Media Header Box inside Track Box(es) for Opus bitstream.
+        and the Media Header Box inside Track Box(es) for Opus bitstream. The timescale field in the Media Header Box is
+        typically set to 48000. It is recommended that the timescale field in the Movie Header Box be set to the same
+        value of the timescale field in the Media Header Box in order to avoid the rounding problem when specifying
+        duration of edit if the timescales in all of the Media Header Boxes are set to the same value.
 
         The Edit List Box is applied to whole movie including all movie fragments. Therefore, it is impossible to tell
         the actual duration in the case producing movie fragments on the fly such as live-streaming. In such cases,
@@ -329,16 +330,10 @@ Table of Contents
               and the extensions should be placed after the Opus Specific Box.
 <a name="4.8"></a>
     4.8 Additional Requirements, Restrictions, Recommendations and Definitions for Boxes
-        4.8.1 Movie Header Box<a name="4.8.1"></a>
-            If any track containing Opus bitstreams, the following recommendations are applied.
-            + timescale:
-                The timescale field should be set to the same value of the timescale field in the Media Header Box
-                inside Track Box(es) for Opus bitstream if no tracks for bitstreams other than Opus bitstream is present.
-
-        4.8.2 Edit Box<a name="4.8.2"></a>
+        4.8.1 Edit Box<a name="4.8.1"></a>
             For any track containing Opus bitstreams, exactly one Edit Box shall be present.
 
-        4.8.3 Edit List Box<a name="4.8.3"></a>
+        4.8.2 Edit List Box<a name="4.8.2"></a>
             For any track containing Opus bitstreams, exactly one Edit List Box shall be present. In addition, for
             non-empty edits, the following recommendations are applied.
             + segment_duration:
@@ -356,25 +351,20 @@ Table of Contents
                 If the segment_duration field is used to indicate the actual duration, the media_rate field shall be
                 set to 1.
 
-        4.8.4 Media Header Box<a name="4.8.4"></a>
-            For any track containing Opus bitstreams, the following recommendation is applied.
-            + timescale:
-                The timescale field should be set to 48000 to access sample-accurately.
-
-        4.8.5 Handler Reference Box<a name="4.8.5"></a>
+        4.8.3 Handler Reference Box<a name="4.8.3"></a>
             For any track containing Opus bitstreams, the following requirement is applied.
             + handler_type:
                 The handler_type field shall be set to 'soun'.
 
-        4.8.6 Sound Media Header Box<a name="4.8.6"></a>
+        4.8.4 Sound Media Header Box<a name="4.8.4"></a>
             For any track containing Opus bitstreams, the Sound Media Header Box shall be present.
 
-        4.8.7 Sample Table Box<a name="4.8.7"></a>
+        4.8.5 Sample Table Box<a name="4.8.5"></a>
             For any track containing Opus bitstreams, at least one Sample Group Description Boxes and at least one
             Sample to Group Boxes shall be present, and the Sync Sample Box shall not be present as long as there are
             no samples other than Opus samples in the same track.
 
-        4.8.8 OpusSampleEntry<a name="4.8.8"></a>
+        4.8.6 OpusSampleEntry<a name="4.8.6"></a>
             For any track containing Opus bitstreams, at least one OpusSampleEntry shall be present.
 
             The syntax and semantics of the OpusSampleEntry is shown as follows.
@@ -393,7 +383,7 @@ Table of Contents
             + samplerate:
                 The samplerate field shall be set to 48000&lt&lt16.
 
-        4.8.9 Opus Specific Box<a name="4.8.9"></a>
+        4.8.7 Opus Specific Box<a name="4.8.7"></a>
             Exactly one Opus Specific Box shall be present in each OpusSampleEntry.
             The Opus Specific Box contains the version field and this specification defines version 0 of this box.
             If incompatible changes occured in the fields after the version field within the OpusSpecificBox in the
