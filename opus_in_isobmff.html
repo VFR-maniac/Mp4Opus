@@ -7,12 +7,12 @@
     </head>
     <body bgcolor="0x333333" text="#60B0C0">
         <b><u>Encapsulation of Opus in ISO Base Media File Format</u></b><br>
-        <font size="2">last updated: October 1, 2014</font><br>
+        <font size="2">last updated: December 11, 2014</font><br>
         <br>
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.5.3 (incomplete)
+                                        Version 0.5.4 (incomplete)
 
 
 Table of Contents
@@ -38,21 +38,20 @@ Table of Contents
         <a href="#4.8.1">4.8.1</a> File Type Box
         <a href="#4.8.2">4.8.2</a> Segment Type Box
         <a href="#4.8.3">4.8.3</a> Movie Header Box
-        <a href="#4.8.4">4.8.4</a> Track Header Box
-        <a href="#4.8.5">4.8.5</a> Edit Box
-        <a href="#4.8.6">4.8.6</a> Edit List Box
-        <a href="#4.8.7">4.8.7</a> Media Header Box
-        <a href="#4.8.8">4.8.8</a> Handler Reference Box
-        <a href="#4.8.9">4.8.9</a> Sound Media Header Box
-        <a href="#4.8.10">4.8.10</a> Sample Table Box
-        <a href="#4.8.11">4.8.11</a> OpusSampleEntry
-        <a href="#4.8.12">4.8.12</a> Opus Specific Box
-        <a href="#4.8.13">4.8.13</a> Sample Group Description Box
-        <a href="#4.8.14">4.8.14</a> Sample to Group Box
-        <a href="#4.8.15">4.8.15</a> Track Extends Box
-        <a href="#4.8.16">4.8.16</a> Track Fragment Box
-        <a href="#4.8.17">4.8.17</a> Track Fragment Header Box
-        <a href="#4.8.18">4.8.18</a> Track Fragment Run Box
+        <a href="#4.8.4">4.8.4</a> Edit Box
+        <a href="#4.8.5">4.8.5</a> Edit List Box
+        <a href="#4.8.6">4.8.6</a> Media Header Box
+        <a href="#4.8.7">4.8.7</a> Handler Reference Box
+        <a href="#4.8.8">4.8.8</a> Sound Media Header Box
+        <a href="#4.8.9">4.8.9</a> Sample Table Box
+        <a href="#4.8.10">4.8.10</a> OpusSampleEntry
+        <a href="#4.8.11">4.8.11</a> Opus Specific Box
+        <a href="#4.8.12">4.8.12</a> Sample Group Description Box
+        <a href="#4.8.13">4.8.13</a> Sample to Group Box
+        <a href="#4.8.14">4.8.14</a> Track Extends Box
+        <a href="#4.8.15">4.8.15</a> Track Fragment Box
+        <a href="#4.8.16">4.8.16</a> Track Fragment Header Box
+        <a href="#4.8.17">4.8.17</a> Track Fragment Run Box
     <a href="#4.9">4.9</a> Example of Encapsulation
 <a href="#5">5</a> Author's Address
 
@@ -286,7 +285,7 @@ Table of Contents
               Without such a box, we cannot know in container level whether an Opus sample is the last Opus sample in
               an Opus bitstream or not. Is this preferable?
 
-        See also 4.8.6 Edit List Box in this specification.
+        See also 4.8.5 Edit List Box in this specification.
 <a name="4.7"></a>
     4.7 Channel Layout
         By the application of alternate_group in the Track Header Box, whole audio channels in all active tracks from
@@ -348,21 +347,10 @@ Table of Contents
                 The timescale field should be set to the same value of the timescale field in the Media Header Box
                 inside Track Box(es) for Opus bitstream if no tracks for bitstreams other than Opus bitstream is present.
 
-        4.8.4 Track Header Box<a name="4.8.4"></a>
-            For any track containing Opus bitstreams, the following requirements are applied.
-            + layer:
-                The layer field shall be set to 0.
-            + matrix:
-                The matrix field shall be set to { 0x00010000,0,0,0,0x00010000,0,0,0,0x40000000 }.
-            + width:
-                The width field shall be set to 0.
-            + height:
-                The height field shall be set to 0.
-
-        4.8.5 Edit Box<a name="4.8.5"></a>
+        4.8.4 Edit Box<a name="4.8.4"></a>
             For any track containing Opus bitstreams, exactly one Edit Box shall be present.
 
-        4.8.6 Edit List Box<a name="4.8.6"></a>
+        4.8.5 Edit List Box<a name="4.8.5"></a>
             For any track containing Opus bitstreams, exactly one Edit List Box shall be present. In addition, for
             non-empty edits, the following recommendations are applied.
             + segment_duration:
@@ -380,25 +368,25 @@ Table of Contents
                 If the segment_duration field is used to indicate the actual duration, the media_rate field shall be
                 set to 1.
 
-        4.8.7 Media Header Box<a name="4.8.7"></a>
+        4.8.6 Media Header Box<a name="4.8.6"></a>
             For any track containing Opus bitstreams, the following recommendation is applied.
             + timescale:
                 The timescale field should be set to 48000 to access sample-accurately.
 
-        4.8.8 Handler Reference Box<a name="4.8.8"></a>
+        4.8.7 Handler Reference Box<a name="4.8.7"></a>
             For any track containing Opus bitstreams, the following requirement is applied.
             + handler_type:
                 The handler_type field shall be set to 'soun'.
 
-        4.8.9 Sound Media Header Box<a name="4.8.9"></a>
+        4.8.8 Sound Media Header Box<a name="4.8.8"></a>
             For any track containing Opus bitstreams, the Sound Media Header Box shall be present.
 
-        4.8.10 Sample Table Box<a name="4.8.10"></a>
+        4.8.9 Sample Table Box<a name="4.8.9"></a>
             For any track containing Opus bitstreams, at least one Sample Group Description Boxes and at least one
             Sample to Group Boxes shall be present, and the Sync Sample Box shall not be present as long as there are
             no samples other than Opus samples in the same track.
 
-        4.8.11 OpusSampleEntry<a name="4.8.11"></a>
+        4.8.10 OpusSampleEntry<a name="4.8.10"></a>
             For any track containing Opus bitstreams, at least one OpusSampleEntry shall be present.
 
             The syntax and semantics of the OpusSampleEntry is shown as follows.
@@ -417,7 +405,7 @@ Table of Contents
             + samplerate:
                 The samplerate field shall be set to 48000&lt&lt16.
 
-        4.8.12 Opus Specific Box<a name="4.8.12"></a>
+        4.8.11 Opus Specific Box<a name="4.8.11"></a>
             Exactly one Opus Specific Box shall be present in each OpusSampleEntry.
             The Opus Specific Box contains the version field and this specification defines version 0 of this box.
             If incompatible changes occured in the fields after the version field within the OpusSpecificBox in the
@@ -491,7 +479,7 @@ Table of Contents
                 The ChannelMapping field shall be set to the same octet string as *Channel Mapping* field in the identi-
                 fication header defined in Ogg Opus [4].
 
-        4.8.13 Sample Group Description Box<a name="4.8.13"></a>
+        4.8.12 Sample Group Description Box<a name="4.8.12"></a>
             For any track containing Opus bitstreams, at least one Sample Group Description Box shall be present and have
             the grouping_type field set to 'roll'. In addition, the following requirements and restriction are applied.
             + version:
@@ -504,27 +492,27 @@ Table of Contents
 
             See also 4.5.2 Pre-roll.
 
-        4.8.14 Sample to Group Box<a name="4.8.14"></a>
+        4.8.13 Sample to Group Box<a name="4.8.13"></a>
             For any track containing Opus bitstreams, at least one Sample to Group Box shall be present and have the
             grouping_type field set to 'roll'. In addition, the following requirement is applied.
             + group_description_index:
                 The group_description_index fields shall not be set to 0 if the grouping_type field set to 'roll'.
 
-        4.8.15 Track Extends Box<a name="4.8.15"></a>
+        4.8.14 Track Extends Box<a name="4.8.14"></a>
             For any track containing Opus bitstreams, the following requirement is applied.
             + default_sample_flags:
                 The sample_is_non_sync_sample field shall be set to 0.
 
-        4.8.16 Track Fragment Box<a name="4.8.16"></a>
+        4.8.15 Track Fragment Box<a name="4.8.15"></a>
             For any track containing Opus bitstreams, if any sample is contained in track fragment, the Sample to
             Group Box with the grouping_type field set to 'roll' shall be present for that track fragment.
 
-        4.8.17 Track Fragment Header Box<a name="4.8.17"></a>
+        4.8.16 Track Fragment Header Box<a name="4.8.16"></a>
             For any track containing Opus bitstreams, the following requirement is applied.
             + default_sample_flags:
                 The sample_is_non_sync_sample field shall be set to 0.
 
-        4.8.18 Track Fragment Run Box<a name="4.8.18"></a>
+        4.8.17 Track Fragment Run Box<a name="4.8.17"></a>
             For any track containing Opus bitstreams, the following requirements are applied.
             + first_sample_flags:
                 The sample_is_non_sync_sample field shall be set to 0.
