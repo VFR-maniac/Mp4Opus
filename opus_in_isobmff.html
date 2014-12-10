@@ -12,7 +12,7 @@
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.5.12 (incomplete)
+                                        Version 0.5.13 (incomplete)
 
 
 Table of Contents
@@ -22,8 +22,9 @@ Table of Contents
 <a href="#4">4</a> Design Rules of Encapsulation
     <a href="#4.1">4.1</a> File Type Indentification
     <a href="#4.2">4.2</a> Basic Structure
-        <a href="#4.2.1">4.2.1</a> Initial Movie
-        <a href="#4.2.2">4.2.2</a> Movie Fragments
+        <a href="#4.2.1">4.2.1</a> General
+        <a href="#4.2.2">4.2.2</a> Initial Movie
+        <a href="#4.2.3">4.2.3</a> Movie Fragments
     <a href="#4.3">4.3</a> Byte Order
     <a href="#4.4">4.4</a> Definition of Opus sample
         <a href="#4.4.1">4.4.1</a> Opus sample
@@ -36,10 +37,8 @@ Table of Contents
     <a href="#4.7">4.7</a> Channel Layout
     <a href="#4.8">4.8</a> Additional Requirements, Restrictions, Recommendations and Definitions for Boxes
         <a href="#4.8.1">4.8.1</a> Edit List Box
-        <a href="#4.8.2">4.8.2</a> Handler Reference Box
-        <a href="#4.8.3">4.8.3</a> Sound Media Header Box
-        <a href="#4.8.4">4.8.4</a> OpusSampleEntry
-        <a href="#4.8.5">4.8.5</a> Opus Specific Box
+        <a href="#4.8.2">4.8.2</a> OpusSampleEntry
+        <a href="#4.8.3">4.8.3</a> Opus Specific Box
     <a href="#4.9">4.9</a> Example of Encapsulation (informative)
 <a href="#5">5</a> Author's Address
 
@@ -109,7 +108,22 @@ Table of Contents
               If you desire that this file format is an alternative file format to the Ogg Opus, I recommend you define.
 <a name="4.2"></a>
     4.2 Basic Structure
-        4.2.1 Initial Movie<a name="4.2.1"></a>
+        4.2.1 General<a name="4.2.1"></a>
+            This subclause summarizes requirements of the encapsulation of Opus coded bitstream as media data in audio
+            tracks in file formats compliant with the ISO Base Media File Format. The details are described in clauses
+            after this clause.
+                + The handler_type field in the Handler Reference Box shall be set to 'soun'.
+                + The Media Information Box shall contain the Sound Media Header Box.
+                + The codingname of the sample entry is 'Opus'.
+                    See 4.8.2 OpusSampleEntry to get the details about the sample entry.
+                + The 'dOps' box is added to the sample entry to convey initializing information for the decoder.
+                    See 4.8.3 Opus Specific Box to get the details.
+                + An Opus sample is exactly one Opus packet for each of different Opus bitstreams.
+                    See 4.4 Definition of Opus sample to get the details.
+                + Every Opus sample is a sync sample but requires pre-roll for every random access.
+                    See 4.5 Random Access to get the details.
+
+        4.2.2 Initial Movie<a name="4.2.2"></a>
             This subclause specifies a basic structure of the Movie Box as follows:
 
             +----+----+----+----+----+----+----+----+------------------------------+
@@ -133,7 +147,7 @@ Table of Contents
             +----+----+----+----+----+----+----+----+------------------------------+
             |    |    |    |minf|    |    |    |    | Media Information Box        |
             +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |    |smhd|    |    |    | Sound Media Information Box  |
+            |    |    |    |    |smhd|    |    |    | Sound Media Header Box       |
             +----+----+----+----+----+----+----+----+------------------------------+
             |    |    |    |    |dinf|    |    |    | Data Information Box         |
             +----+----+----+----+----+----+----+----+------------------------------+
@@ -180,7 +194,7 @@ Table of Contents
             are specified in 4.8 Additional Requirements, Restrictions, Recommendations and Definitions for Boxes in
             this specification. For the others, the definition is as is defined in ISO/IEC 14496-12 [1].
 
-        4.2.2 Movie Fragments<a name="4.2.2"></a>
+        4.2.3 Movie Fragments<a name="4.2.3"></a>
             This subclause specifies a basic structure of the Movie Fragment Box as follows:
 
             +----+----+----+----+----+----+----+----+------------------------------+
@@ -348,15 +362,7 @@ Table of Contents
                 If the segment_duration field is used to indicate the actual duration, the media_rate field shall be
                 set to 1.
 
-        4.8.2 Handler Reference Box<a name="4.8.2"></a>
-            For any track containing Opus bitstreams, the following requirement is applied.
-            + handler_type:
-                The handler_type field shall be set to 'soun'.
-
-        4.8.3 Sound Media Header Box<a name="4.8.3"></a>
-            For any track containing Opus bitstreams, the Sound Media Header Box shall be present.
-
-        4.8.4 OpusSampleEntry<a name="4.8.4"></a>
+        4.8.2 OpusSampleEntry<a name="4.8.2"></a>
             For any track containing Opus bitstreams, at least one OpusSampleEntry shall be present.
 
             The syntax and semantics of the OpusSampleEntry is shown as follows.
@@ -375,7 +381,7 @@ Table of Contents
             + samplerate:
                 The samplerate field shall be set to 48000&lt&lt16.
 
-        4.8.5 Opus Specific Box<a name="4.8.5"></a>
+        4.8.3 Opus Specific Box<a name="4.8.3"></a>
             Exactly one Opus Specific Box shall be present in each OpusSampleEntry.
             The Opus Specific Box contains the version field and this specification defines version 0 of this box.
             If incompatible changes occured in the fields after the version field within the OpusSpecificBox in the
