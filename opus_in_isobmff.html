@@ -12,7 +12,7 @@
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.5.9 (incomplete)
+                                        Version 0.5.10 (incomplete)
 
 
 Table of Contents
@@ -300,7 +300,9 @@ Table of Contents
             OutputChannelCount = 6;
             StreamCount        = 4;
             CoupledCount       = 2;
-            ChannelMapping     = {0, 1, 2, 3, 4, 5}; // front left, front center, front right, rear left, rear right, LFE
+            ChannelMapping     = {0, 4, 1, 2, 3, 5}; // front left, front center, front right, rear left, rear right, LFE
+        Here, to couple front left to front right channels into the first stream, and couple rear left to rear right
+        channels into the second stream, reordering is needed since coupled streams must precede any non-coupled stream.
         You extract the four Opus bitstreams from this track and you encapsulate two of the four into a track and the
         others into another track. The former track is as follows.
             OutputChannelCount = 6;
