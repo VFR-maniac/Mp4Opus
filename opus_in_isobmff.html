@@ -12,7 +12,7 @@
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.5.5 (incomplete)
+                                        Version 0.5.6 (incomplete)
 
 
 Table of Contents
@@ -46,10 +46,7 @@ Table of Contents
         <a href="#4.8.9">4.8.9</a> Opus Specific Box
         <a href="#4.8.10">4.8.10</a> Sample Group Description Box
         <a href="#4.8.11">4.8.11</a> Sample to Group Box
-        <a href="#4.8.12">4.8.12</a> Track Extends Box
-        <a href="#4.8.13">4.8.13</a> Track Fragment Box
-        <a href="#4.8.14">4.8.14</a> Track Fragment Header Box
-        <a href="#4.8.15">4.8.15</a> Track Fragment Run Box
+        <a href="#4.8.12">4.8.12</a> Track Fragment Box
     <a href="#4.9">4.9</a> Example of Encapsulation
 <a href="#5">5</a> Author's Address
 
@@ -260,6 +257,7 @@ Table of Contents
         4.5.1 Random Access Point<a name="4.5.1"></a>
             All Opus samples can be independently decoded i.e. every Opus sample is a sync sample. Therefore, the Sync
             Sample Box shall not be present as long as there are no samples other than Opus samples in the same track.
+            And the sample_is_non_sync_sample field for Opus samples shall be set to 0.
 
         4.5.2 Pre-roll<a name="4.5.2"></a>
             Opus requires at least 80 millisecond pre-roll after each random access.
@@ -486,26 +484,9 @@ Table of Contents
             + group_description_index:
                 The group_description_index fields shall not be set to 0 if the grouping_type field set to 'roll'.
 
-        4.8.12 Track Extends Box<a name="4.8.12"></a>
-            For any track containing Opus bitstreams, the following requirement is applied.
-            + default_sample_flags:
-                The sample_is_non_sync_sample field shall be set to 0.
-
-        4.8.13 Track Fragment Box<a name="4.8.13"></a>
+        4.8.12 Track Fragment Box<a name="4.8.12"></a>
             For any track containing Opus bitstreams, if any sample is contained in track fragment, the Sample to
             Group Box with the grouping_type field set to 'roll' shall be present for that track fragment.
-
-        4.8.14 Track Fragment Header Box<a name="4.8.14"></a>
-            For any track containing Opus bitstreams, the following requirement is applied.
-            + default_sample_flags:
-                The sample_is_non_sync_sample field shall be set to 0.
-
-        4.8.15 Track Fragment Run Box<a name="4.8.15"></a>
-            For any track containing Opus bitstreams, the following requirements are applied.
-            + first_sample_flags:
-                The sample_is_non_sync_sample field shall be set to 0.
-            + sample_flags:
-                The sample_is_non_sync_sample field shall be set to 0.
 <a name="4.9"></a>
     4.9 Example of Encapsulation
         [File]
