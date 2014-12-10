@@ -12,7 +12,7 @@
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.5.8 (incomplete)
+                                        Version 0.5.9 (incomplete)
 
 
 Table of Contents
@@ -39,9 +39,8 @@ Table of Contents
         <a href="#4.8.2">4.8.2</a> Edit List Box
         <a href="#4.8.3">4.8.3</a> Handler Reference Box
         <a href="#4.8.4">4.8.4</a> Sound Media Header Box
-        <a href="#4.8.5">4.8.5</a> Sample Table Box
-        <a href="#4.8.6">4.8.6</a> OpusSampleEntry
-        <a href="#4.8.7">4.8.7</a> Opus Specific Box
+        <a href="#4.8.5">4.8.5</a> OpusSampleEntry
+        <a href="#4.8.6">4.8.6</a> Opus Specific Box
     <a href="#4.9">4.9</a> Example of Encapsulation
 <a href="#5">5</a> Author's Address
 
@@ -359,12 +358,7 @@ Table of Contents
         4.8.4 Sound Media Header Box<a name="4.8.4"></a>
             For any track containing Opus bitstreams, the Sound Media Header Box shall be present.
 
-        4.8.5 Sample Table Box<a name="4.8.5"></a>
-            For any track containing Opus bitstreams, at least one Sample Group Description Boxes and at least one
-            Sample to Group Boxes shall be present, and the Sync Sample Box shall not be present as long as there are
-            no samples other than Opus samples in the same track.
-
-        4.8.6 OpusSampleEntry<a name="4.8.6"></a>
+        4.8.5 OpusSampleEntry<a name="4.8.5"></a>
             For any track containing Opus bitstreams, at least one OpusSampleEntry shall be present.
 
             The syntax and semantics of the OpusSampleEntry is shown as follows.
@@ -383,7 +377,7 @@ Table of Contents
             + samplerate:
                 The samplerate field shall be set to 48000&lt&lt16.
 
-        4.8.7 Opus Specific Box<a name="4.8.7"></a>
+        4.8.6 Opus Specific Box<a name="4.8.6"></a>
             Exactly one Opus Specific Box shall be present in each OpusSampleEntry.
             The Opus Specific Box contains the version field and this specification defines version 0 of this box.
             If incompatible changes occured in the fields after the version field within the OpusSpecificBox in the
