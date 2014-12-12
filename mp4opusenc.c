@@ -711,10 +711,7 @@ static int prepare_output
     if( !cs )
         return ERROR_MSG( "failed to create Opus specific info.\n" );
     lsmash_opus_specific_parameters_t *param = (lsmash_opus_specific_parameters_t *)cs->data.structured;
-    param->version              = 0;
-    param->flags                = OPUS_DSI_FLAG_PRE_SKIP_PRESENT
-                                | OPUS_DSI_FLAG_INPUT_SAMPLE_RATE_PRESENT
-                                | OPUS_DSI_FLAG_OUTPUT_GAIN_PRESENT;
+    param->Version              = 0;
     param->OutputChannelCount   = out_summary->channels;
     param->InputSampleRate      = in_summary->frequency;
     param->OutputGain           = 0;
