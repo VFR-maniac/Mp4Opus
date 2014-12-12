@@ -12,7 +12,7 @@
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.5.17 (incomplete)
+                                        Version 0.5.18 (incomplete)
 
 
 Table of Contents
@@ -33,7 +33,7 @@ Table of Contents
         <a href="#4.5.1">4.6.1</a> Random Access Point
         <a href="#4.5.2">4.6.2</a> Pre-roll
     <a href="#4.6">4.6</a> Trimming of Actual Duration
-    <a href="#4.7">4.7</a> Channel Layout
+    <a href="#4.7">4.7</a> Channel Layout (informative)
     <a href="#4.8">4.8</a> Basic Structure (informative)
         <a href="#4.8.1">4.8.2</a> Initial Movie
         <a href="#4.8.2">4.8.3</a> Movie Fragments
@@ -304,7 +304,7 @@ Table of Contents
               Without such a box, we cannot know in container level whether an Opus sample is the last Opus sample in
               an Opus bitstream or not. Is this preferable?
 <a name="4.7"></a>
-    4.7 Channel Layout
+    4.7 Channel Layout (informative)
         By the application of alternate_group in the Track Header Box, whole audio channels in all active tracks from
         non-alternate group and/or different alternate group from each other are composited into the presentation. If
         an Opus sample consists of multiple Opus bitstreams, it can be splitted into individual Opus bitstreams and
