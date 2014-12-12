@@ -12,7 +12,7 @@
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.5.16 (incomplete)
+                                        Version 0.5.17 (incomplete)
 
 
 Table of Contents
@@ -22,21 +22,21 @@ Table of Contents
 <a href="#4">4</a> Design Rules of Encapsulation
     <a href="#4.1">4.1</a> File Type Indentification
     <a href="#4.2">4.2</a> Overview of Track Structure
-    <a href="#4.3">4.3</a> Basic Structure
-        <a href="#4.3.1">4.3.2</a> Initial Movie
-        <a href="#4.3.2">4.3.3</a> Movie Fragments
-    <a href="#4.4">4.4</a> Byte Order
-    <a href="#4.5">4.5</a> Definitions of Opus sample
-        <a href="#4.5.1">4.5.1</a> Sample entry format
-        <a href="#4.5.2">4.5.2</a> Opus Specific Box
-        <a href="#4.5.3">4.5.3</a> Opus sample
-        <a href="#4.5.4">4.5.4</a> Duration of Opus sample
-        <a href="#4.5.5">4.5.5</a> Sub-sample
-    <a href="#4.6">4.6</a> Random Access
-        <a href="#4.6.1">4.6.1</a> Random Access Point
-        <a href="#4.6.2">4.6.2</a> Pre-roll
-    <a href="#4.7">4.7</a> Trimming of Actual Duration
-    <a href="#4.8">4.8</a> Channel Layout
+    <a href="#4.3">4.3</a> Byte Order
+    <a href="#4.4">4.4</a> Definitions of Opus sample
+        <a href="#4.4.1">4.4.1</a> Sample entry format
+        <a href="#4.4.2">4.4.2</a> Opus Specific Box
+        <a href="#4.4.3">4.4.3</a> Opus sample
+        <a href="#4.4.4">4.4.4</a> Duration of Opus sample
+        <a href="#4.4.5">4.4.5</a> Sub-sample
+    <a href="#4.5">4.5</a> Random Access
+        <a href="#4.5.1">4.6.1</a> Random Access Point
+        <a href="#4.5.2">4.6.2</a> Pre-roll
+    <a href="#4.6">4.6</a> Trimming of Actual Duration
+    <a href="#4.7">4.7</a> Channel Layout
+    <a href="#4.8">4.8</a> Basic Structure (informative)
+        <a href="#4.8.1">4.8.2</a> Initial Movie
+        <a href="#4.8.2">4.8.3</a> Movie Fragments
     <a href="#4.9">4.9</a> Example of Encapsulation (informative)
 <a href="#5">5</a> Author's Address
 
@@ -112,122 +112,25 @@ Table of Contents
             + The handler_type field in the Handler Reference Box shall be set to 'soun'.
             + The Media Information Box shall contain the Sound Media Header Box.
             + The codingname of the sample entry is 'Opus'.
-                See 4.5.1 Sample entry format to get the details about the sample entry.
+                See 4.4.1 Sample entry format to get the details about the sample entry.
             + The 'dOps' box is added to the sample entry to convey initializing information for the decoder.
-                See 4.5.2 Opus Specific Box to get the details.
+                See 4.4.2 Opus Specific Box to get the details.
             + An Opus sample is exactly one Opus packet for each of different Opus bitstreams.
-                See 4.5.3 Opus sample to get the details.
+                See 4.4.3 Opus sample to get the details.
             + Every Opus sample is a sync sample but requires pre-roll for every random access.
-                See 4.6 Random Access to get the details.
+                See 4.5 Random Access to get the details.
 <a name="4.3"></a>
-    4.3 Basic Structure
-        4.3.1 Initial Movie<a name="4.3.1"></a>
-            This subclause specifies a basic structure of the Movie Box as follows:
-
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |moov|    |    |    |    |    |    |    | Movie Box                    |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |mvhd|    |    |    |    |    |    | Movie Header Box             |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |trak|    |    |    |    |    |    | Track Box                    |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |tkhd|    |    |    |    |    | Track Header Box             |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |edts|    |    |    |    |    | Edit Box                     |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |elst|    |    |    |    | Edit List Box                |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |mdia|    |    |    |    |    | Media Box                    |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |mdhd|    |    |    |    | Media Header Box             |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |hdlr|    |    |    |    | Handler Reference Box        |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |minf|    |    |    |    | Media Information Box        |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |    |smhd|    |    |    | Sound Media Header Box       |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |    |dinf|    |    |    | Data Information Box         |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |    |    |dref|    |    | Data Reference Box           |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |    |    |    |url |    | DataEntryUrlBox              |
-            +----+----+----+----+----+----+ or +----+------------------------------+
-            |    |    |    |    |    |    |urn |    | DataEntryUrnBox              |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |    |stbl|    |    |    | Sample Table                 |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |    |    |stsd|    |    | Sample Description Box       |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |    |    |    |Opus|    | OpusSampleEntry              |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |    |    |    |    |dOps| Opus Specific Box            |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |    |    |stts|    |    | Decoding Time to Sample Box  |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |    |    |stsc|    |    | Sample To Chunk Box          |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |    |    |stsz|    |    | Sample Size Box              |
-            +----+----+----+----+----+ or +----+----+------------------------------+
-            |    |    |    |    |    |stz2|    |    | Compact Sample Size Box      |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |    |    |stco|    |    | Chunk Offset Box             |
-            +----+----+----+----+----+ or +----+----+------------------------------+
-            |    |    |    |    |    |co64|    |    | Chunk Large Offset Box       |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |    |    |sgpd|    |    | Sample Group Description Box |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |    |    |    |sbgp|    |    | Sample to Group Box          |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |mvex|*   |    |    |    |    |    | Movie Extends Box            |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |trex|*   |    |    |    |    | Track Extends Box            |
-            +----+----+----+----+----+----+----+----+------------------------------+
-
-                    Figure 1 - Basic structure of Movie Box
-
-            It is strongly recommended that the order of boxes should follow the above structure.
-            Boxes marked with an asterisk (*) may be present.
-            For most boxes listed above, the definition is as is defined in ISO/IEC 14496-12 [1]. The additional boxes
-            and the additional requirements, restrictions and recommendations to the other boxes are described later. 
-
-        4.3.2 Movie Fragments<a name="4.3.2"></a>
-            This subclause specifies a basic structure of the Movie Fragment Box as follows:
-
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |moof|    |    |    |    |    |    |    | Movie Fragment Box           |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |mfhd|    |    |    |    |    |    | Movie Fragment Header Box    |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |traf|    |    |    |    |    |    | Track Fragment Box           |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |tfhd|    |    |    |    |    | Track Fragment Header Box    |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |trun|    |    |    |    |    | Track Fragment Run Box       |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |sgpd|*   |    |    |    |    | Sample Group Description Box |
-            +----+----+----+----+----+----+----+----+------------------------------+
-            |    |    |sbgp|*   |    |    |    |    | Sample to Group Box          |
-            +----+----+----+----+----+----+----+----+------------------------------+
-
-                    Figure 2 - Basic structure of Movie Fragment Box
-
-            It is strongly recommended that the Movie Fragment Header Box and the Track Fragment Header Box be
-            placed first in their container.
-            Boxes marked with an asterisk (*) may be present.
-            For the boxes listed above, the definition is as is defined in ISO/IEC 14496-12 [1].
-<a name="4.4"></a>
-    4.4 Byte Order
+    4.3 Byte Order
         The fields in the boxes are stored as big-endian format.
         All Opus samples are processed byte-by-byte. Therefore, the endianness has nothing to do with any Opus sample.
-<a name="4.5"></a>
-    4.5 Definitions of Opus sample
-        4.5.1 Sample entry format<a name="4.5.1"></a>
+<a name="4.4"></a>
+    4.4 Definitions of Opus sample
+        4.4.1 Sample entry format<a name="4.4.1"></a>
             For any track containing Opus bitstreams, at least one sample entry describing corresponding Opus bitstream
             shall be present inside the Sample Table Box. This version of the specification defines only one sample
             entry format named OpusSampleEntry whose codingname is 'Opus'. This sample entry includes exactly one Opus
-            Specific Box defined in 4.5.2 as a mandatory box and indicates that Opus samples described by this sample
-            entry are stored by the sample format described in 4.5.3.
+            Specific Box defined in 4.4.2 as a mandatory box and indicates that Opus samples described by this sample
+            entry are stored by the sample format described in 4.4.3.
 
             The syntax and semantics of the OpusSampleEntry is shown as follows.
 
@@ -247,7 +150,7 @@ Table of Contents
             + OpusSpecificBox
                 This box contains initializing information for the decoder as defined in 4.4.2.
 
-        4.5.2 Opus Specific Box<a name="4.5.2"></a>
+        4.4.2 Opus Specific Box<a name="4.4.2"></a>
             Exactly one Opus Specific Box shall be present in each OpusSampleEntry.
             The Opus Specific Box contains the version field and this specification defines version 0 of this box.
             If incompatible changes occured in the fields after the version field within the OpusSpecificBox in the
@@ -321,7 +224,7 @@ Table of Contents
                 The ChannelMapping field shall be set to the same octet string as *Channel Mapping* field in the identi-
                 fication header defined in Ogg Opus [4].
 
-        4.5.3 Opus sample<a name="4.5.3"></a>
+        4.4.3 Opus sample<a name="4.4.3"></a>
             An Opus sample is exactly one Opus packet for each of different Opus bitstreams. Due to support more than
             two channels, an Opus sample can contain frames from multiple Opus bitstreams but all Opus packets shall
             share with the total of frame sizes in a single Opus sample. The way of how to pack an Opus packet from
@@ -336,7 +239,7 @@ Table of Contents
 
                     Figure 3 - Example structure of an Opus sample containing two Opus bitstreams
 
-        4.5.4 Duration of Opus sample<a name="4.5.4"></a>
+        4.4.4 Duration of Opus sample<a name="4.4.4"></a>
             The duration of Opus sample is given by multiplying the total of frame sizes for a single Opus bitstream
             expressed in seconds by the value of the timescale field in the Media Header Box.
             Let's say an Opus sample consists of two Opus bitstreams, where the frame size of one bitstream is 40 milli-
@@ -349,18 +252,18 @@ Table of Contents
             the last Opus sample of an Opus bitstream is given by multiplying the number of the valid samples by the
             value produced by dividing the value of the timescale field in the Media Header Box by 48000.
 
-        4.5.5 Sub-sample<a name="4.5.5"></a>
+        4.4.5 Sub-sample<a name="4.4.5"></a>
             The structure of the last Opus packet in an Opus sample is different from the others in the same Opus sample,
             and the others are invalid Opus packets as an Opus sample because of self-delimiting framing. To avoid
             complexities, sub-sample is not defined for Opus sample in this specification.
-<a name="4.6"></a>
-    4.6 Random Access
-        4.6.1 Random Access Point<a name="4.6.1"></a>
+<a name="4.5"></a>
+    4.5 Random Access
+        4.5.1 Random Access Point<a name="4.5.1"></a>
             All Opus samples can be independently decoded i.e. every Opus sample is a sync sample. Therefore, the Sync
             Sample Box shall not be present as long as there are no samples other than Opus samples in the same track.
             And the sample_is_non_sync_sample field for Opus samples shall be set to 0.
 
-        4.6.2 Pre-roll<a name="4.6.2"></a>
+        4.5.2 Pre-roll<a name="4.5.2"></a>
             Opus requires at least 80 millisecond pre-roll after each random access.
             Pre-roll is indicated by the roll_distance field in AudioRollRecoveryEntry. AudioPreRollEntry shall not be
             used since every Opus sample is a sync sample in Opus bitstream. Note that roll_distance is expressed in
@@ -373,8 +276,8 @@ Table of Contents
 
             For the requirement of AudioRollRecoveryEntry, the compatible_brands field in the File Type Box shall
             contain at least one brand which requires support for roll groups.
-<a name="4.7"></a>
-    4.7 Trimming of Actual Duration
+<a name="4.6"></a>
+    4.6 Trimming of Actual Duration
         Due to the priming samples (or the padding at the beginning) derived from the pre-roll for the startup and the
         padded samples at the end, we need trim from media to get the actual duration. An edit in the Edit List Box can
         achieve this demand, and the Edit Box and the Edit List Box shall be present.
@@ -400,8 +303,8 @@ Table of Contents
               bitstreams in a track, each Opus bitstream may contain some padded samples.
               Without such a box, we cannot know in container level whether an Opus sample is the last Opus sample in
               an Opus bitstream or not. Is this preferable?
-<a name="4.8"></a>
-    4.8 Channel Layout
+<a name="4.7"></a>
+    4.7 Channel Layout
         By the application of alternate_group in the Track Header Box, whole audio channels in all active tracks from
         non-alternate group and/or different alternate group from each other are composited into the presentation. If
         an Opus sample consists of multiple Opus bitstreams, it can be splitted into individual Opus bitstreams and
@@ -442,6 +345,104 @@ Table of Contents
               able to exclude certain channels from the already mapped channels to remove pure silent channels. The
               channel mapping defined in the Opus Specific Box should be designed as processed before the extensions,
               and the extensions should be placed after the Opus Specific Box.
+<a name="4.8"></a>
+    4.8 Basic Structure (informative)
+        4.8.1 Initial Movie<a name="4.8.1"></a>
+            This subclause shows a basic structure of the Movie Box as follows:
+
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |moov|    |    |    |    |    |    |    | Movie Box                    |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |mvhd|    |    |    |    |    |    | Movie Header Box             |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |trak|    |    |    |    |    |    | Track Box                    |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |tkhd|    |    |    |    |    | Track Header Box             |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |edts|    |    |    |    |    | Edit Box                     |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |elst|    |    |    |    | Edit List Box                |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |mdia|    |    |    |    |    | Media Box                    |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |mdhd|    |    |    |    | Media Header Box             |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |hdlr|    |    |    |    | Handler Reference Box        |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |minf|    |    |    |    | Media Information Box        |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |    |smhd|    |    |    | Sound Media Header Box       |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |    |dinf|    |    |    | Data Information Box         |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |    |    |dref|    |    | Data Reference Box           |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |    |    |    |url |    | DataEntryUrlBox              |
+            +----+----+----+----+----+----+ or +----+------------------------------+
+            |    |    |    |    |    |    |urn |    | DataEntryUrnBox              |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |    |stbl|    |    |    | Sample Table                 |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |    |    |stsd|    |    | Sample Description Box       |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |    |    |    |Opus|    | OpusSampleEntry              |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |    |    |    |    |dOps| Opus Specific Box            |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |    |    |stts|    |    | Decoding Time to Sample Box  |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |    |    |stsc|    |    | Sample To Chunk Box          |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |    |    |stsz|    |    | Sample Size Box              |
+            +----+----+----+----+----+ or +----+----+------------------------------+
+            |    |    |    |    |    |stz2|    |    | Compact Sample Size Box      |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |    |    |stco|    |    | Chunk Offset Box             |
+            +----+----+----+----+----+ or +----+----+------------------------------+
+            |    |    |    |    |    |co64|    |    | Chunk Large Offset Box       |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |    |    |sgpd|    |    | Sample Group Description Box |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |    |    |    |sbgp|    |    | Sample to Group Box          |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |mvex|*   |    |    |    |    |    | Movie Extends Box            |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |trex|*   |    |    |    |    | Track Extends Box            |
+            +----+----+----+----+----+----+----+----+------------------------------+
+
+                    Figure 1 - Basic structure of Movie Box
+
+            It is strongly recommended that the order of boxes should follow the above structure.
+            Boxes marked with an asterisk (*) may be present.
+            For most boxes listed above, the definition is as is defined in ISO/IEC 14496-12 [1]. The additional boxes
+            and the additional requirements, restrictions and recommendations to the other boxes are described in this
+            specification. 
+
+        4.8.2 Movie Fragments<a name="4.8.2"></a>
+            This subclause shows a basic structure of the Movie Fragment Box as follows:
+
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |moof|    |    |    |    |    |    |    | Movie Fragment Box           |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |mfhd|    |    |    |    |    |    | Movie Fragment Header Box    |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |traf|    |    |    |    |    |    | Track Fragment Box           |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |tfhd|    |    |    |    |    | Track Fragment Header Box    |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |trun|    |    |    |    |    | Track Fragment Run Box       |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |sgpd|*   |    |    |    |    | Sample Group Description Box |
+            +----+----+----+----+----+----+----+----+------------------------------+
+            |    |    |sbgp|*   |    |    |    |    | Sample to Group Box          |
+            +----+----+----+----+----+----+----+----+------------------------------+
+
+                    Figure 2 - Basic structure of Movie Fragment Box
+
+            It is strongly recommended that the Movie Fragment Header Box and the Track Fragment Header Box be
+            placed first in their container.
+            Boxes marked with an asterisk (*) may be present.
+            For the boxes listed above, the definition is as is defined in ISO/IEC 14496-12 [1].
 <a name="4.9"></a>
     4.9 Example of Encapsulation (informative)
         [File]
