@@ -7,12 +7,12 @@
     </head>
     <body bgcolor="0x333333" text="#60B0C0">
         <b><u>Encapsulation of Opus in ISO Base Media File Format</u></b><br>
-        <font size="2">last updated: December 11, 2014</font><br>
+        <font size="2">last updated: December 12, 2014</font><br>
         <br>
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.5.13 (incomplete)
+                                        Version 0.5.14 (incomplete)
 
 
 Table of Contents
@@ -36,9 +36,8 @@ Table of Contents
     <a href="#4.6">4.6</a> Trimming of Actual Duration
     <a href="#4.7">4.7</a> Channel Layout
     <a href="#4.8">4.8</a> Additional Requirements, Restrictions, Recommendations and Definitions for Boxes
-        <a href="#4.8.1">4.8.1</a> Edit List Box
-        <a href="#4.8.2">4.8.2</a> OpusSampleEntry
-        <a href="#4.8.3">4.8.3</a> Opus Specific Box
+        <a href="#4.8.1">4.8.1</a> OpusSampleEntry
+        <a href="#4.8.2">4.8.2</a> Opus Specific Box
     <a href="#4.9">4.9</a> Example of Encapsulation (informative)
 <a href="#5">5</a> Author's Address
 
@@ -115,9 +114,9 @@ Table of Contents
                 + The handler_type field in the Handler Reference Box shall be set to 'soun'.
                 + The Media Information Box shall contain the Sound Media Header Box.
                 + The codingname of the sample entry is 'Opus'.
-                    See 4.8.2 OpusSampleEntry to get the details about the sample entry.
+                    See 4.8.1 OpusSampleEntry to get the details about the sample entry.
                 + The 'dOps' box is added to the sample entry to convey initializing information for the decoder.
-                    See 4.8.3 Opus Specific Box to get the details.
+                    See 4.8.2 Opus Specific Box to get the details.
                 + An Opus sample is exactly one Opus packet for each of different Opus bitstreams.
                     See 4.4 Definition of Opus sample to get the details.
                 + Every Opus sample is a sync sample but requires pre-roll for every random access.
@@ -284,22 +283,28 @@ Table of Contents
         Due to the priming samples (or the padding at the beginning) derived from the pre-roll for the startup and the
         padded samples at the end, we need trim from media to get the actual duration. An edit in the Edit List Box can
         achieve this demand, and the Edit Box and the Edit List Box shall be present.
+
         For sample-accurate trimming, proper timescale should be set to the timescale field in the Movie Header Box
         and the Media Header Box inside Track Box(es) for Opus bitstream. The timescale field in the Media Header Box is
         typically set to 48000. It is recommended that the timescale field in the Movie Header Box be set to the same
         value of the timescale field in the Media Header Box in order to avoid the rounding problem when specifying
         duration of edit if the timescales in all of the Media Header Boxes are set to the same value.
 
+        For example, to indicate the actual duration of an Opus bitstream in a track with the timescale fields of both
+        the Movie Header Box and the Media Header Box set to 48000, we would use the following edit:
+            segment_duration = the number of the valid samples
+            media_time = the number of the priming samples
+            media_rate = 1 &lt&lt 16
+
         The Edit List Box is applied to whole movie including all movie fragments. Therefore, it is impossible to tell
         the actual duration in the case producing movie fragments on the fly such as live-streaming. In such cases,
-        the duration of the last Opus sample may be helpful.
+        the duration of the last Opus sample may be helpful by setting zero to the segment_duration field since the
+        value 0 represents implicit duration equal to the sum of the duration of all samples.
         TODO: Should we define a new box which indicates the last Opus samples?
               Since this specification allows multiple sample descriptions, i.e. allows concatenation of multiple Opus
               bitstreams in a track, each Opus bitstream may contain some padded samples.
               Without such a box, we cannot know in container level whether an Opus sample is the last Opus sample in
               an Opus bitstream or not. Is this preferable?
-
-        See also 4.8.1 Edit List Box in this specification.
 <a name="4.7"></a>
     4.7 Channel Layout
         By the application of alternate_group in the Track Header Box, whole audio channels in all active tracks from
@@ -344,25 +349,7 @@ Table of Contents
               and the extensions should be placed after the Opus Specific Box.
 <a name="4.8"></a>
     4.8 Additional Requirements, Restrictions, Recommendations and Definitions for Boxes
-        4.8.1 Edit List Box<a name="4.8.1"></a>
-            For any track containing Opus bitstreams, exactly one Edit List Box shall be present. In addition, for
-            non-empty edits, the following recommendations are applied.
-            + segment_duration:
-                The segment_duration field can be used to indicate the actual duration of Opus bitstream.
-                When the value of the timescale field in the Movie Header Box is equal to 48000, the segment_duration
-                field shall be set to the number of the valid samples to indicate the actual duration.
-                When enabling movie fragments, the segment_duration field may be set to 0. The value 0 represents
-                implicit duration equal to the sum of the duration of all samples. This would be helpful for excluding
-                the padded samples from the presentation timeline when producing movie fragments on the fly.
-            + media_time:
-                The media_time field can be used to remove the priming samples of Opus bitstreams.
-                When the value of the timescale field in the Media Header Box is equal to 48000, the media_time field
-                shall be set to the number of the priming samples to remove the priming samples.
-            + media_rate:
-                If the segment_duration field is used to indicate the actual duration, the media_rate field shall be
-                set to 1.
-
-        4.8.2 OpusSampleEntry<a name="4.8.2"></a>
+        4.8.1 OpusSampleEntry<a name="4.8.1"></a>
             For any track containing Opus bitstreams, at least one OpusSampleEntry shall be present.
 
             The syntax and semantics of the OpusSampleEntry is shown as follows.
@@ -381,7 +368,7 @@ Table of Contents
             + samplerate:
                 The samplerate field shall be set to 48000&lt&lt16.
 
-        4.8.3 Opus Specific Box<a name="4.8.3"></a>
+        4.8.2 Opus Specific Box<a name="4.8.2"></a>
             Exactly one Opus Specific Box shall be present in each OpusSampleEntry.
             The Opus Specific Box contains the version field and this specification defines version 0 of this box.
             If incompatible changes occured in the fields after the version field within the OpusSpecificBox in the
