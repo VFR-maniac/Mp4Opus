@@ -12,7 +12,7 @@
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.6.1 (incomplete)
+                                        Version 0.6.2 (incomplete)
 
 
 Table of Contents
@@ -25,7 +25,7 @@ Table of Contents
     <a href="#4.3">4.3</a> Definitions of Opus sample
         <a href="#4.3.1">4.3.1</a> Sample entry format
         <a href="#4.3.2">4.3.2</a> Opus Specific Box
-        <a href="#4.3.3">4.3.3</a> Opus sample
+        <a href="#4.3.3">4.3.3</a> Sample format
         <a href="#4.3.4">4.3.4</a> Duration of Opus sample
         <a href="#4.3.5">4.3.5</a> Sub-sample
         <a href="#4.3.6">4.3.6</a> Random Access
@@ -115,7 +115,7 @@ Table of Contents
             + The 'dOps' box is added to the sample entry to convey initializing information for the decoder.
                 See 4.3.2 Opus Specific Box to get the details.
             + An Opus sample is exactly one Opus packet for each of different Opus bitstreams.
-                See 4.3.3 Opus sample to get the details.
+                See 4.3.3 Sample format to get the details.
             + Every Opus sample is a sync sample but requires pre-roll for every random access to get correct output.
                 See 4.3.6 Random Access to get the details.
 <a name="4.3"></a>
@@ -204,7 +204,7 @@ Table of Contents
                 The ChannelMapping field shall be set to the same octet string as *Channel Mapping* field in the identi-
                 fication header defined in Ogg Opus [4].
 
-        4.3.3 Opus sample<a name="4.3.3"></a>
+        4.3.3 Sample format<a name="4.3.3"></a>
             An Opus sample is exactly one Opus packet for each of different Opus bitstreams. Due to support more than
             two channels, an Opus sample can contain frames from multiple Opus bitstreams but all Opus packets shall
             share with the total of frame sizes in a single Opus sample. The way of how to pack an Opus packet from
