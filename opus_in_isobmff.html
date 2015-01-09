@@ -12,7 +12,7 @@
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.6.3 (incomplete)
+                                        Version 0.6.4 (incomplete)
 
 
 Table of Contents
@@ -111,6 +111,8 @@ Table of Contents
             + The handler_type field in the Handler Reference Box shall be set to 'soun'.
             + The Media Information Box shall contain the Sound Media Header Box.
             + The codingname of the sample entry is 'Opus'.
+                This specification does not define any encapsulation using MP4AudioSampleEntry with objectTypeIndication
+                specified by the MPEG-4 Registration Authority (http://www.mp4ra.org/).
                 See 4.3.1 Sample entry format to get the details about the sample entry.
             + The 'dOps' box is added to the sample entry to convey initializing information for the decoder.
                 See 4.3.2 Opus Specific Box to get the details.
