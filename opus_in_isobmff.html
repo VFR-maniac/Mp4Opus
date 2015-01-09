@@ -7,12 +7,12 @@
     </head>
     <body bgcolor="0x333333" text="#60B0C0">
         <b><u>Encapsulation of Opus in ISO Base Media File Format</u></b><br>
-        <font size="2">last updated: December 13, 2014</font><br>
+        <font size="2">last updated: January 10, 2015</font><br>
         <br>
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.6.2 (incomplete)
+                                        Version 0.6.3 (incomplete)
 
 
 Table of Contents
@@ -218,7 +218,7 @@ Table of Contents
                 +-----------------------------------------+-------------------------------------+
                 |<---------------------------- the size of Opus sample ------------------------>|
 
-                    Figure 3 - Example structure of an Opus sample containing two Opus bitstreams
+                    Figure 1 - Example structure of an Opus sample containing two Opus bitstreams
 
         4.3.4 Duration of Opus sample<a name="4.3.4"></a>
             The duration of Opus sample is given by multiplying the total of frame sizes for a single Opus bitstream
@@ -393,7 +393,7 @@ Table of Contents
             |    |    |trex|*   |    |    |    |    | Track Extends Box            |
             +----+----+----+----+----+----+----+----+------------------------------+
 
-                    Figure 1 - Basic structure of Movie Box
+                    Figure 2 - Basic structure of Movie Box
 
             It is strongly recommended that the order of boxes should follow the above structure.
             Boxes marked with an asterisk (*) may be present.
@@ -420,7 +420,7 @@ Table of Contents
             |    |    |sbgp|*   |    |    |    |    | Sample to Group Box          |
             +----+----+----+----+----+----+----+----+------------------------------+
 
-                    Figure 2 - Basic structure of Movie Fragment Box
+                    Figure 3 - Basic structure of Movie Fragment Box
 
             It is strongly recommended that the Movie Fragment Header Box and the Track Fragment Header Box be
             placed first in their container.
