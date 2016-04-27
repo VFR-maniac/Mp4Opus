@@ -7,12 +7,12 @@
     </head>
     <body bgcolor="0x333333" text="#60B0C0">
         <b><u>Encapsulation of Opus in ISO Base Media File Format</u></b><br>
-        <font size="2">last updated: January 12, 2015</font><br>
+        <font size="2">last updated: April 28, 2016</font><br>
         <br>
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.6.6 (incomplete)
+                                        Version 0.6.7 (incomplete)
 
 
 Table of Contents
@@ -173,10 +173,10 @@ Table of Contents
                 identification header defined in Ogg Opus [4].
             + PreSkip:
                 The PreSkip field indicates the number of the priming samples, that is, the number of samples at 48000 Hz
-                to discard from the decoder output when starting playback. The value of the PreSkip field could be zero
-                when removing Opus samples containing the number of PCM samples equal to or more than of the priming
-                samples. The PreSkip field is not used for discarding the priming samples at the whole playback at all
-                since it is informative only, and that task falls on the Edit List Box.
+                to discard from the decoder output when starting playback. The value of the PreSkip field shall be at least
+                80 milliseconds' worth of PCM samples even when removing any number of Opus samples which may or may not
+                contain the priming samples. The PreSkip field is not used for discarding the priming samples at the whole
+                playback at all since it is informative only, and that task falls on the Edit List Box.
             + InputSampleRate:
                 The InputSampleRate field shall be set to the same value as the *Input Sample Rate* field in the
                 identification header defined in Ogg Opus [4].
