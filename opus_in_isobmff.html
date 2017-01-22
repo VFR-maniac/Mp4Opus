@@ -12,7 +12,7 @@
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.6.8 (incomplete)
+                                        Version 0.6.9 (incomplete)
 
 
 Table of Contents
@@ -20,7 +20,7 @@ Table of Contents
 <a href="#2">2</a> Normative References
 <a href="#3">3</a> Terms and Definitions
 <a href="#4">4</a> Design Rules of Encapsulation
-    <a href="#4.1">4.1</a> File Type Indentification
+    <a href="#4.1">4.1</a> File Type Identification
     <a href="#4.2">4.2</a> Overview of Track Structure
     <a href="#4.3">4.3</a> Definitions of Opus sample
         <a href="#4.3.1">4.3.1</a> Sample entry format
@@ -83,7 +83,7 @@ Table of Contents
 
 <a name="4"></a>
 4 Design Rules of Encapsulation
-    4.1 File Type Indentification<a name="4.1"></a>
+    4.1 File Type Identification<a name="4.1"></a>
         This specification does not define any brand to declare files are conformant to this specification. However,
         files conformant to this specification shall contain at least one brand, which supports the requirements and the
         requirements described in this clause without contradiction, in the compatible brands list of the File Type Box.
@@ -123,7 +123,7 @@ Table of Contents
 
             + channelcount:
                 The channelcount field shall be set to the sum of the total number of Opus bitstreams and the number
-                of Opus bitstreams producing two channels. This value is indentical with (M+N), where M is the value of
+                of Opus bitstreams producing two channels. This value is identical with (M+N), where M is the value of
                 the *Coupled Stream Count* field and N is the value of the *Stream Count* field in the *Channel Mapping
                 Table* in the identification header defined in Ogg Opus [3].
             + samplesize:
