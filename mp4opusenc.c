@@ -666,8 +666,8 @@ static int prepare_output
     lsmash_file_parameters_t *file_param = &out_file->param;
     if( lsmash_open_file( out_file->name, 0, file_param ) < 0 )
         return ERROR_MSG( "failed to open an output file.\n" );
-    file_param->major_brand   = ISOM_BRAND_TYPE_MP42;
-    file_param->brands        = (lsmash_brand_type [2]){ ISOM_BRAND_TYPE_MP42, ISOM_BRAND_TYPE_ISO2 };
+    file_param->major_brand   = ISOM_BRAND_TYPE_OPUS;
+    file_param->brands        = (lsmash_brand_type [2]){ ISOM_BRAND_TYPE_OPUS, ISOM_BRAND_TYPE_ISO2 };
     file_param->brand_count   = 2;
     file_param->minor_version = 0;
     out_file->fh = lsmash_set_file( output->root, file_param );

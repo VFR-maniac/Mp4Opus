@@ -194,7 +194,7 @@ fi
 
 # -- check libopus -----------------------------------------------------------------------------
 log_echo "checking for libopus..."
-if ! cc_check "$CFLAGS" "$LDFLAGS $LIBS $XLIBS" "opus/opus_multistream.h" "opus_multistream_decoder_create(0,0,0,0,(void*)1,NULL);" ; then
+if ! cc_check "$CFLAGS" "$LDFLAGS $LIBS $XLIBS" "opus/opus_multistream.h" "opus_multistream_decoder_init((void*)1,0,0,0,0,(void*)1);" ; then
     log_echo "error: libopus checking failed"
     error_exit "opus_multistream.h might not be installed or some libs missing."
 fi
