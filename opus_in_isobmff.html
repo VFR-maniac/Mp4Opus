@@ -7,12 +7,12 @@
     </head>
     <body bgcolor="0x333333" text="#60B0C0">
         <b><u>Encapsulation of Opus in ISO Base Media File Format</u></b><br>
-        <font size="2">last updated: August 26, 2018</font><br>
+        <font size="2">last updated: August 27, 2018</font><br>
         <br>
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.6.11 (incomplete)
+                                        Version 0.7.0 (incomplete)
 
 
 Table of Contents
@@ -32,7 +32,9 @@ Table of Contents
             <a href="#4.3.6.1">4.3.6.1</a> Random Access Point
             <a href="#4.3.6.2">4.3.6.2</a> Pre-roll
     <a href="#4.4">4.4</a> Trimming of Actual Duration
-    <a href="#4.5">4.5</a> Channel Layout (informative)
+    <a href="#4.5">4.5</a> Channel Layout
+        <a href="#4.5.1">4.5.1</a> ISO Base Media native Channel Mapping
+        <a href="#4.5.2">4.5.2</a> Composition on all active tracks (informative)
     <a href="#4.6">4.6</a> Basic Structure (informative)
         <a href="#4.6.1">4.6.2</a> Initial Movie
         <a href="#4.6.2">4.6.3</a> Movie Fragments
@@ -186,7 +188,8 @@ Table of Contents
                 header define in Ogg Opus [3]. Note that the value is stored as 8.8 fixed-point.
             + ChannelMappingFamily:
                 The ChannelMappingFamily field shall be set to the same value as the *Channel Mapping Family* field in
-                the identification header defined in Ogg Opus [3].
+                the identification header defined in Ogg Opus [3]. Note that the value 255 may be used for an alternative
+                to map channels by ISO Base Media native mapping. The details are described in 4.5.1.
             + StreamCount:
                 The StreamCount field shall be set to the same value as the *Stream Count* field in the identification
                 header defined in Ogg Opus [3].
@@ -275,42 +278,57 @@ Table of Contents
         the duration of the last Opus sample may be helpful by setting zero to the segment_duration field since the
         value 0 represents implicit duration equal to the sum of the duration of all samples.
 <a name="4.5"></a>
-    4.5 Channel Layout (informative)
-        By the application of alternate_group in the Track Header Box, whole audio channels in all active tracks from
-        non-alternate group and/or different alternate group from each other are composited into the presentation. If
-        an Opus sample consists of multiple Opus bitstreams, it can be splitted into individual Opus bitstreams and
-        reconstructed into new Opus samples as long as every Opus bitstream has the same total duration in each Opus
-        sample. This nature can be utilized to encapsulate a single Opus bitstream in each track without breaking the
-        original channel layout.
+    4.5 Channel Layout
+        4.5.1 ISO Base Media native Channel Mapping<a name="4.5.1"></a>
+            ISO Base Media File Format, that is ISO/IEC 14496-12 [1], defines an extension ChannelLayout to the
+            AudioSampleEntry, which conveys channel assignment information. The ChannelLayout can be used to specify
+            the channel layout more flexibly instead of the predefined layouts of the ChannelMappingFamily.
 
-        As an example, let's say there is a following track:
-            OutputChannelCount = 6;
-            StreamCount        = 4;
-            CoupledCount       = 2;
-            ChannelMapping     = {0, 4, 1, 2, 3, 5}; // front left, front center, front right, rear left, rear right, LFE
-        Here, to couple front left to front right channels into the first stream, and couple rear left to rear right
-        channels into the second stream, reordering is needed since coupled streams must precede any non-coupled stream.
-        You extract the four Opus bitstreams from this track and you encapsulate two of the four into a track and the
-        others into another track. The former track is as follows.
-            OutputChannelCount = 6;
-            StreamCount        = 2;
-            CoupledCount       = 2;
-            ChannelMapping     = {0, 255, 1, 2, 3, 255}; // front left, front center, front right, rear left, rear right, LFE
-        And the latter track is as follows.
-            OutputChannelCount = 6;
-            StreamCount        = 2;
-            CoupledCount       = 0;
-            ChannelMapping     = {255, 0, 255, 255, 255, 1}; // front left, front center, front right, rear left, rear right, LFE
-        In addition, the value of the alternate_group field in the both tracks is set to 0. As the result, the player
-        may play as if channels with 255 are not present, and play the presentation constructed from the both tracks
-        in the same channel layout as the one of the original track. Keep in mind that the way of the composition, i.e.
-        the mixing for playback, is not defined here, and maybe different results could occur except for the channel
-        layout of the original, depending on an implementation or the definition of a derived file format.
+            To utilize the ChannelLayout for OpusSampleEntry, the ChannelMappingFamily field should be set to 255.
+            Even when the ChannelMappingFamily field is set to another value, the assignment of each channel would be
+            changed as specified by the ChannelLayout. The assignment of channels is applied to the output channels
+            produced by the ChannelMapping. In this way the parameters of the Opus Specific Box are processed before the
+            ChannelLayout, and the ChannelLayout shall be placed after the Opus Specific Box.
 
-        Note that some derived file formats may specify the restriction to ignore alternate grouping. In the context of
-        such file formats, this application is not available. This unavailability does not mean incompatibilities among
-        file formats unless the restriction to the value of the alternate_group field is specified and brings about
-        any conflict among their definitions.
+        4.5.2 Composition on all active tracks (informative)<a name="4.5.2"></a>
+            By the application of alternate_group in the Track Header Box, whole audio channels in all active tracks from
+            non-alternate group and/or different alternate group from each other are composited into the presentation. If
+            an Opus sample consists of multiple Opus bitstreams, it can be splitted into individual Opus bitstreams and
+            reconstructed into new Opus samples as long as every Opus bitstream has the same total duration in each Opus
+            sample. This nature can be utilized to encapsulate a single Opus bitstream in each track without breaking the
+            original channel layout.
+
+            As an example, let's say there is a following track:
+                OutputChannelCount = 6;
+                StreamCount        = 4;
+                CoupledCount       = 2;
+                ChannelMapping     = {0, 4, 1, 2, 3, 5}; // front left, front center, front right,
+                                                         // rear left, rear right, LFE
+            Here, to couple front left to front right channels into the first stream, and couple rear left to rear right
+            channels into the second stream, reordering is needed since coupled streams must precede any non-coupled
+            stream. You extract the four Opus bitstreams from this track and you encapsulate two of the four into a track
+            and the others into another track. The former track is as follows.
+                OutputChannelCount = 6;
+                StreamCount        = 2;
+                CoupledCount       = 2;
+                ChannelMapping     = {0, 255, 1, 2, 3, 255}; // front left, front center, front right,
+                                                             // rear left, rear right, LFE
+            And the latter track is as follows.
+                OutputChannelCount = 6;
+                StreamCount        = 2;
+                CoupledCount       = 0;
+                ChannelMapping     = {255, 0, 255, 255, 255, 1}; // front left, front center, front right,
+                                                                 // rear left, rear right, LFE
+            In addition, the value of the alternate_group field in the both tracks is set to 0. As the result, the player
+            may play as if channels with 255 are not present, and play the presentation constructed from the both tracks
+            in the same channel layout as the one of the original track. Keep in mind that the way of the composition, i.e.
+            the mixing for playback, is not defined here, and maybe different results could occur except for the channel
+            layout of the original, depending on an implementation or the definition of a derived file format.
+
+            Note that some derived file formats may specify the restriction to ignore alternate grouping. In the context
+            of such file formats, this application is not available. This unavailability does not mean incompatibilities
+            among file formats unless the restriction to the value of the alternate_group field is specified and brings
+            about any conflict among their definitions.
 <a name="4.6"></a>
     4.6 Basic Structure (informative)
         4.6.1 Initial Movie<a name="4.6.1"></a>
