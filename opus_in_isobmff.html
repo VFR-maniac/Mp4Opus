@@ -7,12 +7,12 @@
     </head>
     <body bgcolor="0x333333" text="#60B0C0">
         <b><u>Encapsulation of Opus in ISO Base Media File Format</u></b><br>
-        <font size="2">last updated: August 27, 2018</font><br>
+        <font size="2">last updated: August 28, 2018</font><br>
         <br>
         <div class="normal_link pre frame_box">
 
                                 Encapsulation of Opus in ISO Base Media File Format
-                                        Version 0.7.1 (incomplete)
+                                        Version 0.8.0 (incomplete)
 
 
 Table of Contents
@@ -32,7 +32,7 @@ Table of Contents
             <a href="#4.3.6.1">4.3.6.1</a> Random Access Point
             <a href="#4.3.6.2">4.3.6.2</a> Pre-roll
     <a href="#4.4">4.4</a> Trimming of Actual Duration
-    <a href="#4.5">4.5</a> Channel Layout
+    <a href="#4.5">4.5</a> Channel Mapping
         <a href="#4.5.1">4.5.1</a> ISO Base Media native Channel Mapping
         <a href="#4.5.2">4.5.2</a> Composition on all active tracks (informative)
     <a href="#4.6">4.6</a> Basic Structure (informative)
@@ -124,10 +124,9 @@ Table of Contents
             }
 
             + channelcount:
-                The channelcount field shall be set to the sum of the total number of Opus bitstreams and the number
-                of Opus bitstreams producing two channels. This value is identical with (M+N), where M is the value of
-                the *Coupled Stream Count* field and N is the value of the *Stream Count* field in the *Channel Mapping
-                Table* in the identification header defined in Ogg Opus [3].
+                The channelcount field indicates the number of output channels and shall be set to the same value of
+                the OutputChannelCount in the OpusDecoderConfigurationRecord. The value of this field may be used in
+                the ChannelLayout if any as described in 4.5.1.
             + samplesize:
                 The samplesize field shall be set to 16.
             + samplerate:
@@ -278,17 +277,22 @@ Table of Contents
         the duration of the last Opus sample may be helpful by setting zero to the segment_duration field since the
         value 0 represents implicit duration equal to the sum of the duration of all samples.
 <a name="4.5"></a>
-    4.5 Channel Layout
+    4.5 Channel Mapping
         4.5.1 ISO Base Media native Channel Mapping<a name="4.5.1"></a>
             ISO Base Media File Format, that is ISO/IEC 14496-12 [1], defines an extension ChannelLayout to the
-            AudioSampleEntry, which conveys channel assignment information. The ChannelLayout can be used to specify
-            the channel layout more flexibly instead of the predefined layouts of the ChannelMappingFamily.
+            AudioSampleEntry, which conveys information of mapping channels to loudspeaker positions. The ChannelLayout
+            enables to specify the channel layout more flexibly than the predefined layouts of the ChannelMappingFamily.
 
             To utilize the ChannelLayout for OpusSampleEntry, the ChannelMappingFamily field should be set to 255.
-            Even when the ChannelMappingFamily field is set to another value, the assignment of each channel would be
-            changed as specified by the ChannelLayout. The assignment of channels is applied to the output channels
-            produced by the ChannelMapping. In this way the parameters of the Opus Specific Box are processed before the
-            ChannelLayout, and the ChannelLayout shall be placed after the Opus Specific Box.
+            Even when the ChannelMappingFamily field is set to another value, the assignment of each output channel to
+            loudspeaker position specified by the ChannelMappingFamily would be changed as specified by the ChannelLayout.
+            The procedure of the assignment is the following.
+
+                1. Decoded channels are mapped to output channels according to the ChannelMappingTable.
+                2. Output channels are mapped to loudspeaker positions according to the ChannelLayout.
+
+            In this way, the parameters of the Opus Specific Box are processed before the ChannelLayout, and the
+            ChannelLayout shall follow the Opus Specific Box.
 
         4.5.2 Composition on all active tracks (informative)<a name="4.5.2"></a>
             By the application of alternate_group in the Track Header Box, whole audio channels in all active tracks from
